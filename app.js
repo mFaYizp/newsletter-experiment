@@ -1,7 +1,8 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const request = require("request");
-const https = require("https")
+const https = require("https");
+const { error } = require("console");
 
 
 const app = express();
@@ -32,14 +33,22 @@ app.post("/", function(req,res){
         ]
     };
     const jsonData = JSON.stringify(data)
-    const url = "https://us21.admin.mailchimp.com/lists/e2885e5b8a"
+    const url = "https://us21.api.mailchimp.com/3.0/lists/e2885e5b8a"
 
     const options = {
         method: "POST",
-        auth: "FaYizp:e45fa02e73cf336991ec53166512c25c-us21"
+        auth: "FaYizp:b94f7463b9b47139874d77af1af5b886-us21"
     }
     
     const request = https.request(url, options, function(response){
+
+        if (response.statusCode === 200) {
+            res.sendFile(__dirname + "/success.html")
+        } else {
+            res.sendFile(__dirname + "/failure.html");
+        }
+        
+
         response.on("data", function(data){
             console.log(JSON.parse(data));
         })
@@ -50,21 +59,15 @@ app.post("/", function(req,res){
     
 })
 
+app.post("/failure", function(req,res){
+    res.redirect("/");
+})
 
 
-
-
-
-
-
-
-
-
-
-app.listen(3000, function(){
+app.listen(process.env.PORT ||3000 , function(){
     console.log("server is running on PORT 3000")
 })
 // API KEY
-// e45fa02e73cf336991ec53166512c25c-us21
+// b94f7463b9b47139874d77af1af5b886-us21
 //List ID
 // e2885e5b8a
